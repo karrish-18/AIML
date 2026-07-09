@@ -1,0 +1,38 @@
+from collections import deque
+
+graph = {
+    'Alice': ['Charlie', 'David'],
+    'Bob': ['Emma', 'Fred'],
+    'Charlie': ['Alice', 'Emma'],
+    'David': ['Alice', 'Emma', 'Fred'],
+    'Emma': ['Charlie', 'David', 'Bob'],
+    'Fred': ['David', 'Bob']
+}
+
+def bfs(graph, start, goal):
+    queue = deque([(start, [start])])
+    visited = {start}
+    while queue:
+        (node, path) = queue.popleft()
+        for neighbor in sorted(graph[node]):
+            if neighbor == goal:
+                return path + [neighbor]
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, path + [neighbor]))
+    return None
+
+def dfs(graph, start, goal, visited=None, path=None):
+    if visited is None: visited = set()
+    if path is None: path = [start]
+    visited.add(start)
+    if start == goal:
+        return path
+    for neighbor in sorted(graph[start]):
+        if neighbor not in visited:
+            result = dfs(graph, neighbor, goal, visited, path + [neighbor])
+            if result: return result
+    return None
+
+print("BFS Path:", bfs(graph, 'Alice', 'Bob'))
+print("DFS Path:", dfs(graph, 'Alice', 'Bob'))
