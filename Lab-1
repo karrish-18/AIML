@@ -1,0 +1,10 @@
+import itertools
+def find_possible_pins():
+    even_digits = [0, 2, 4, 6, 8]
+    all_combinations = itertools.product(even_digits, repeat=4)
+    valid_pins = [pin for pin in all_combinations if sum(pin) == 16]
+    return valid_pins
+results = find_possible_pins()
+print(f"Found {len(results)} possible PINs:")
+for pin in results:
+    print("".join(map(str, pin)))
