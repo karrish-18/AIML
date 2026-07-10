@@ -1,0 +1,47 @@
+from collections import deque
+
+graph = {
+    'Alice': ['Charlie', 'David'],
+    'Bob': ['Emma', 'Fred'],
+    'Charlie': ['Alice', 'Emma'],
+    'David': ['Alice', 'Emma', 'Fred'],
+    'Emma': ['Charlie', 'David', 'Bob'],
+    'Fred': ['David', 'Bob']
+}
+
+def bfs(graph, start, goal, reverse=False):
+    queue = deque([(start, [start])])
+    visited = {start}
+    while queue:
+        (node, path) = queue.popleft()
+        # Change neighbor order to explore different paths of equal length
+        neighbors = sorted(graph[node], reverse=reverse)
+        for neighbor in neighbors:
+            if neighbor == goal:
+                return path + [neighbor]
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, path + [neighbor]))
+    return None
+
+def dfs(graph, start, goal, visited=None, path=None, reverse=False):
+    if visited is None: visited = set()
+    if path is None: path = [start]
+    visited.add(start)
+    if start == goal:
+        return path
+    # Change neighbor order to prioritize different branches
+    neighbors = sorted(graph[start], reverse=reverse)
+    for neighbor in neighbors:
+        if neighbor not in visited:
+            result = dfs(graph, neighbor, goal, visited, path + [neighbor], reverse)
+            if result: return result
+    return None
+
+# Default exploration
+print("BFS (Default):", bfs(graph, 'Alice', 'Bob'))
+print("DFS (Default):", dfs(graph, 'Alice', 'Bob'))
+
+# Exploration with reversed neighbor priority
+print("BFS (Reversed):", bfs(graph, 'Alice', 'Bob', reverse=True))
+print("DFS (Reversed):", dfs(graph, 'Alice', 'Bob', reverse=True))
